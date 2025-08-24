@@ -1,0 +1,189 @@
+[username]
+format = " [╭─$user]($style) on "
+style_user = "bold bright-green"
+style_root = "bold green"
+show_always = true
+
+[hostname]
+format = "[$hostname]($style) in "
+style = "bold purple"
+trim_at = "-"
+ssh_only = false
+disabled = false
+
+[cmd_duration]
+min_time = 10
+format = "took [$duration]($style)"
+
+[character]
+success_symbol = " [→](bold red)"
+error_symbol = " [×](bold red)"
+
+[battery]
+full_symbol = " ╰─🔋 "
+charging_symbol = " ╰─🔌 "
+discharging_symbol = " ╰─⚡ "
+
+[[battery.display]]
+threshold = 15
+style = "bold red"
+
+[[battery.display]]
+threshold = 50
+style = "bold yellow"
+
+[[battery.display]]
+threshold = 80
+style = "bold green"
+
+[memory_usage]
+format = "$symbol[${ram}( | ${swap})]($style) "
+threshold = -1
+style = "bold dimmed white"
+disabled = false
+
+[directory]
+style = "purple"
+truncation_length = 5
+truncate_to_repo = true
+truncation_symbol = "repo: "
+
+[git_branch]
+format = " [$symbol$branch]($style) "
+symbol = "🍣 "
+style = "bold yellow"
+
+[git_commit]
+commit_hash_length = 8
+style = "bold white"
+
+[git_state]
+format = '[\($state( $progress_current of $progress_total)\)]($style) '
+
+[git_status]
+conflicted = "⚔️ "
+ahead = "🏎️ 💨 ×${count} "
+behind = "🐢 ×${count} "
+diverged = "🔱 🏎️ 💨 ×${ahead_count} 🐢 ×${behind_count} "
+untracked = "🛤️  ×${count} "
+stashed = "📦 "
+modified = "📝 ×${count} "
+staged = "🗃️  ×${count} "
+renamed = "📛 ×${count} "
+deleted = "🗑️  ×${count} "
+style = "bright-white"
+format = "$all_status$ahead_behind"
+
+[line_break]
+disabled = false
+
+[time]
+time_format = "%T"
+format = "🕙 $time($style) "
+style = "bold bright-white"
+disabled = true
+
+[aws]
+format = "[$symbol$region]($style) "
+style = "bold yellow"
+symbol = "󰸏 "
+
+[azure]
+format = "[$symbol$subscription]($style) "
+style = "bold yellow"
+symbol = "󰠅 "
+
+[conda]
+format = "[$symbol$environment]($style) "
+style = "bold green"
+symbol = " "
+
+[dart]
+format = "[$symbol$version]($style) "
+style = "bold blue"
+symbol = " "
+
+[docker_context]
+format = "[$symbol$context]($style) "
+style = "bold blue"
+symbol = " "
+
+[elixir]
+format = "[$symbol$version]($style) "
+style = "bold blue"
+symbol = " "
+
+[elm]
+format = "[$symbol$version]($style) "
+style = "bold green"
+symbol = " "
+
+[golang]
+format = "[$symbol$version]($style) "
+style = "bold blue"
+symbol = " "
+
+[hg_branch]
+format = "[$symbol$branch]($style) "
+style = "bold blue"
+symbol = " "
+
+[java]
+format = "[$symbol$version]($style) "
+style = "bold orange"
+symbol = " "
+
+[julia]
+format = "[$symbol$version]($style) "
+style = "bold purple"
+symbol = " "
+
+[nim]
+format = "[$symbol$version]($style) "
+style = "bold yellow"
+symbol = " "
+
+[nix_shell]
+format = "[$symbol$state]($style) "
+style = "bold blue"
+symbol = " "
+
+[nodejs]
+format = "[$symbol$version]($style) "
+style = "bold green"
+symbol = " "
+
+[package]
+format = "is [$symbol$version]($style) "
+style = "bold dimmed purple"
+symbol = " "
+
+[perl]
+format = "[$symbol$version]($style) "
+style = "bold dimmed blue"
+symbol = " "
+
+[php]
+format = "[$symbol$version]($style) "
+style = "bold dimmed purple"
+symbol = " "
+
+[python]
+format = "[$symbol${pyenv_prefix}$version]($style) "
+style = "bold yellow"
+symbol = " "
+
+[ruby]
+format = "[$symbol$version]($style) "
+style = "bold red"
+symbol = " "
+
+[rust]
+format = "[$symbol$version]($style) "
+style = "bold dimmed black"
+symbol = " "
+
+[swift]
+format = "[$symbol$version]($style) "
+style = "bold orange"
+symbol = " "

@@ -1,0 +1,243 @@
+# My fish config. Not much to see here; just some pretty standard stuff.
+
+### ADDING TO THE PATH
+# First line removes the path; second line sets it.  Without the first line,
+# your path gets massive and fish becomes very slow.
+set -e fish_user_paths
+set -U fish_user_paths $HOME/.bin  $HOME/.local/bin $HOME/.config/emacs/bin $HOME/Applications /var/lib/flatpak/exports/bin/ $fish_user_paths
+
+### EXPORT ###
+set fish_greeting                                 # Supresses fish's intro message
+set TERM "xterm-256color"                         # Sets the terminal type
+set EDITOR "emacsclient -t -a ''"                 # $EDITOR use Emacs in terminal
+set VISUAL "emacsclient -c -a emacs"              # $VISUAL use Emacs in GUI mode
+
+### SET MANPAGER
+### Uncomment only one of these!
+
+### "nvim" as manpager
+set -x MANPAGER "nvim +Man!"
+
+### "less" as manpager
+# set -x MANPAGER "less"
+
+### SET EITHER DEFAULT EMACS MODE OR VI MODE ###
+function fish_user_key_bindings
+  # fish_default_key_bindings
+  fish_vi_key_bindings
+end
+### END OF VI MODE ###
+
+### AUTOCOMPLETE AND HIGHLIGHT COLORS ###
+set fish_color_normal brcyan
+set fish_color_autosuggestion '#7d7d7d'
+set fish_color_command brcyan
+set fish_color_error '#ff6c6b'
+set fish_color_param brcyan
+
+### FUNCTIONS ###
+
+# Functions needed for !! and !$
+function __history_previous_command
+  switch (commandline -t)
+  case "!"
+    commandline -t $history[1]; commandline -f repaint
+  case "*"
+    commandline -i !
+  end
+end
+
+function __history_previous_command_arguments
+  switch (commandline -t)
+  case "!"
+    commandline -t ""
+    commandline -f history-token-search-backward
+  case "*"
+    commandline -i '$'
+  end
+end
+
+# The bindings for !! and !$
+if [ "$fish_key_bindings" = "fish_vi_key_bindings" ];
+  bind -Minsert ! __history_previous_command
+  bind -Minsert '$' __history_previous_command_arguments
+else
+  bind ! __history_previous_command
+  bind '$' __history_previous_command_arguments
+end
+
+# Function for creating a backup file
+# ex: backup file.txt
+# result: copies file as file.txt.bak
+function backup --argument filename
+    cp $filename $filename.bak
+end
+
+# Function for copying files and directories, even recursively.
+# ex: copy DIRNAME LOCATIONS
+# result: copies the directory and all of its contents.
+function copy
+    set count (count $argv | tr -d \n)
+    if test "$count" = 2; and test -d "$argv[1]"
+	set from (echo $argv[1] | trim-right /)
+	set to (echo $argv[2])
+        command cp -r $from $to
+    else
+        command cp $argv
+    end
+end
+
+# Function for printing a column (splits input on whitespace)
+# ex: echo 1 2 3 | coln 3
+# output: 3
+function coln
+    while read -l input
+        echo $input | awk '{print $'$argv[1]'}'
+    end
+end
+
+# Function for printing a row
+# ex: seq 3 | rown 3
+# output: 3
+function rown --argument index
+    sed -n "$index p"
+end
+
+# Function for ignoring the first 'n' lines
+# ex: seq 10 | skip 5
+# results: prints everything but the first 5 lines
+function skip --argument n
+    tail +(math 1 + $n)
+end
+
+# Function for taking the first 'n' lines
+# ex: seq 10 | take 5
+# results: prints only the first 5 lines
+function take --argument number
+    head -$number
+end
+
+### END OF FUNCTIONS ###
+
+
+### ALIASES ###
+# navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias .3='cd ../../..'
+alias .4='cd ../../../..'
+alias .5='cd ../../../../..'
+
+# Changing "ls" to "eza"
+alias ls='eza -al --color=always --group-directories-first' # my preferred listing
+alias la='eza -a --color=always --group-directories-first'  # all files and dirs
+alias ll='eza -l --color=always --group-directories-first'  # long format
+alias lt='eza -aT --color=always --group-directories-first' # tree listing
+alias l.='eza -a | egrep "^\."'
+alias l.='eza -al --color=always --group-directories-first ../' # ls on the PARENT directory
+alias l..='eza -al --color=always --group-directories-first ../../' # ls on directory 2 levels up
+alias l...='eza -al --color=always --group-directories-first ../../../' # ls on directory 3 levels up
+
+# pacman and System
+alias update='sudo pacman -Syu'                  # update only standard pkgs
+alias refresh='sudo pacman -Syyu'                # Refresh pkglist & update standard pkgs
+alias yayup='yay -Sua'                          # update only AUR pkgs (yay)
+alias unlock='sudo rm /var/lib/pacman/db.lck'    # remove pacman lock
+alias orphans='sudo pacman -Rns (pacman -Qtdq)'  # remove orphaned packages (DANGEROUS!)
+alias remove='sudo pacman -Rns'                  # remove pkgs and dependencies
+alias install='sudo pacman -S'                   # install pkgs
+alias search='pacman -Ss'                        # search pkgs
+alias kernel='sudo mkinitcpio -P'                # update initrafms
+alias grub='sudo bootctl update'                      # update systemd-boot
+alias enable='sudo systemctl enable'
+alias start='sudo systemctl start'
+alias stop='sudo systemctl stop'
+alias disable='sudo systemctl disable'
+alias mask='sudo systemctl mask'
+alias unmask='sudo systemctl unmask'
+alias services='systemctl list-unit-files --state=enabled'
+
+# adding flags
+alias df='df -h'               # human-readable sizes
+alias free='free -m'           # show sizes in MB
+alias grep='grep --color=auto' # colorize output (good for log files)
+
+# ps
+alias psa="ps auxf"
+alias psgrep="ps aux | grep -v grep | grep -i -e VSZ -e"
+alias psmem='ps auxf | sort -nr -k 4'
+alias pscpu='ps auxf | sort -nr -k 3'
+
+# Merge Xresources
+alias merge='xrdb -merge ~/.Xresources'
+
+# git
+alias addup='git add -u'
+alias addall='git add .'
+alias branch='git branch'
+alias checkout='git checkout'
+alias clone='git clone'
+alias commit='git commit -m'
+alias fetch='git fetch'
+alias pull='git pull origin'
+alias push='git push origin'
+alias tag='git tag'
+alias newtag='git tag -a'
+
+# get error messages from journalctl
+alias jctl="journalctl -p 3 -xb"
+
+# gpg encryption
+# verify signature for isos
+alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
+# receive the key of a developer
+alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
+
+########## OTHERS THINGS #########
+
+### SETTING THE STARSHIP PROMPT ###
+starship init fish | source
+
+### SETUP ZOXIDE ###
+zoxide init fish | source
+
+## Advanced command-not-found hook
+source /usr/share/doc/find-the-command/ftc.fish
+
+## Run fastfetch if session is interactive
+if status --is-interactive
+   fastfetch
+end
+
+# Functions needed for !! and !$ https://github.com/oh-my-fish/plugin-bang-bang
+
+function __history_previous_command
+   switch (commandline -t)
+   case "!"
+      commandline -t $history[1]; commandline -f repaint
+   case "*"
+      commandline -i !
+   end
+end
+
+function __history_previous_command_arguments
+   switch (commandline -t)
+   case "!"
+      commandline -t ""
+      commandline -f history-token-search-backward
+   case "*"
+      commandline -i '$'
+   end
+end
+
+if [ "$fish_key_bindings" = fish_vi_key_bindings ];
+   bind -Minsert ! __history_previous_command
+   bind -Minsert '$' __history_previous_command_arguments
+else
+   bind ! __history_previous_command
+   bind '$' __history_previous_command_arguments
+end
+
+### BAT ###
+
+alias cat 'bat --style header --style snip --style changes --style header'
